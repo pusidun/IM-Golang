@@ -1,0 +1,10 @@
+server:
+  port: 8080
+datasource:
+  driverName: mysql
+  host : 192.168.19.136
+  port : 3306
+  database : im_db
+  username : root
+  password : root
+  charset : utf8
