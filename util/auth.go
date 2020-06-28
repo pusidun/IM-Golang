@@ -17,7 +17,7 @@ type Claims struct {
 func GenerateToken(user model.User) (string, error) {
 	expireTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := &Claims{
-		UserId: user.Nickname,
+		UserId: user.Mobile,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			IssuedAt:  time.Now().Unix(),

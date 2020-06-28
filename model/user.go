@@ -2,6 +2,9 @@ package model
 
 import "github.com/jinzhu/gorm"
 
+/*
+*	nickname允许重复，mobile当做用户的唯一标识
+ */
 type User struct {
 	gorm.Model
 	//Id       int64

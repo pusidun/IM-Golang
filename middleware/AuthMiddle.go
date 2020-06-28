@@ -3,6 +3,7 @@ package middleware
 import (
 	"im-golang/dao"
 	"im-golang/model"
+	"im-golang/serializer"
 	"im-golang/util"
 	"net/http"
 	"strings"
@@ -15,7 +16,11 @@ func AuthMiddleWare() gin.HandlerFunc {
 		tokenString := c.GetHeader("Authorization")
 
 		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer") {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})
+			res := serializer.Response{
+				Status_Code: http.StatusUnauthorized,
+				Msg:         "权限不足",
+			}
+			res.CtxSetResponse(c)
 			c.Abort()
 			return
 		}
@@ -23,18 +28,26 @@ func AuthMiddleWare() gin.HandlerFunc {
 		tokenString = tokenString[7:]
 		token, claims, err := util.ParseToken(tokenString)
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})
+			res := serializer.Response{
+				Status_Code: http.StatusUnauthorized,
+				Msg:         "权限不足",
+			}
+			res.CtxSetResponse(c)
 			c.Abort()
 			return
 		}
 
-		nickname := claims.UserId
+		mobile := claims.UserId
 		DB := dao.DBConn()
 		var user model.User
-		DB.Where("nickname = ?", nickname).First(&user)
+		DB.Where("mobile = ?", mobile).First(&user)
 
 		if len(user.Mobile) == 0 {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "用户不存在"})
+			res := serializer.Response{
+				Status_Code: http.StatusUnauthorized,
+				Msg:         "用户不存在",
+			}
+			res.CtxSetResponse(c)
 			c.Abort()
 			return
 		}
